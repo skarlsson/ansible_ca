@@ -1,0 +1,24 @@
+f001-720-zk.internal.machines ansible_ssh_host=10.1.46.1  zk_id=1
+f005-720-zk.internal.machines ansible_ssh_host=10.1.46.5  zk_id=2
+f003-720-zk.internal.machines ansible_ssh_host=10.1.46.3  zk_id=3
+
+f013-520-kafka ansible_ssh_host=10.1.46.13 kafka_broker_id=1
+f014-520-kafka ansible_ssh_host=10.1.46.14 kafka_broker_id=2 
+f015-520-kafka ansible_ssh_host=10.1.46.15 kafka_broker_id=3
+
+f022-720-influxdb.internal.machines
+f020-300-ar.internal.machines ansible_ssh_host=10.1.46.20 es_instance_name=es0
+f022-720-influxdb.internal.machines ansible_ssh_host=10.1.46.22
+f020-300-ar.internal.machines
+
+[zk]
+f001-720-zk.internal.machines
+f003-720-zk.internal.machines
+f005-720-zk.internal.machines
+
+[kafka]
+f013-520-kafka
+f014-520-kafka
+f015-520-kafka
+
+

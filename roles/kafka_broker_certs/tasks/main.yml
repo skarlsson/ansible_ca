@@ -1,0 +1,32 @@
+- name: create broker keystore ON CA
+  local_action: shell gen-ssl-certs.sh -k server "{{ ca_store }}/dummy_ca/ca-cert" broker_{{ansible_hostname}}_ {{ansible_hostname}}
+  args:
+    chdir: "{{ ca_store }}/broker_keystore"
+    creates: "{{ ca_store }}/broker_keystore/broker_{{ansible_hostname}}_server.keystore.jks"
+
+#now distribute the stuff
+
+- name: Creates /usr/share/ca-certificates/dummy_ca
+  file: path=/usr/share/ca-certificates/dummy_ca state=directory mode=0755
+
+- name: copy ca-cert from CA
+  copy:
+     src: "{{ ca_store }}/dummy_ca/ca-cert" 
+     dest: /usr/share/ca-certificates/dummy_ca/ca-cert 
+
+#copy broker key stores
+
+- name: Creates /etc/kafka-broker-keystore
+  file: path=/etc/kafka-broker-keystore state=directory mode=0755 
+
+- name: copy server keystore
+  copy:
+     src: "{{ ca_store }}/broker_keystore/broker_{{ansible_hostname}}_server.keystore.jks" 
+     dest: /etc/kafka-broker-keystore/server.keystore.jks
+
+- name: copy server truststore
+  copy:
+     src: "{{ ca_store }}/broker_keystore/broker_{{ansible_hostname}}_server.keystore.jks" 
+     dest: /etc/kafka-broker-keystore/server.truststore.jks
+
+

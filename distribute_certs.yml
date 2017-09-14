@@ -1,0 +1,10 @@
+- hosts: kafka
+  become: true
+  roles:
+     - kafka_broker_certs
+
+- hosts: all
+  become: true
+  roles:
+     - client_certs
+

@@ -1,0 +1,23 @@
+- name: copy librdkafka gen-ssl-certs.sh
+  template: src=gen-ssl-certs.sh dest=/usr/local/bin/gen-ssl-certs.sh owner=root group=root mode=755
+
+- name: Creates dummy ca cert dir
+  file: path="{{ ca_store }}/dummy_ca" state=directory mode=0777
+
+#file: path={{ ca_store }}/dummy_ca state=directory mode=0750
+
+- name: create dummy ca cert
+  shell: gen-ssl-certs.sh ca ca-cert dummy
+  args:
+    chdir: "{{ ca_store }}/dummy_ca"
+    creates: "{{ ca_store }}/dummy_ca/ca-cert"
+
+- name: Creates broker keystore dir
+  file: path="{{ ca_store }}/broker_keystore" state=directory mode=0777
+
+- name: creates java client keystore dir
+  file: path="{{ ca_store }}/java_client_keystore" state=directory mode=0777
+
+- name: Creates openssl client keystore dir
+  file: path="{{ ca_store }}/openssl_client_keystore" state=directory mode=0777
+

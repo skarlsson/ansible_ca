@@ -1,0 +1,51 @@
+- name: creates java client keystore on CA
+  local_action: shell gen-ssl-certs.sh -k client "{{ ca_store }}/dummy_ca/ca-cert" client_{{ansible_hostname}}_ {{ansible_hostname}}
+  args:
+    chdir: "{{ ca_store }}/java_client_keystore"
+    creates: "{{ ca_store }}/java_client_keystore/client_{{ansible_hostname}}_client.keystore.jks"
+
+- name: creates openssl client keystore on CA 
+  local_action: shell gen-ssl-certs.sh client {{ ca_store }}/dummy_ca/ca-cert client_{{ansible_hostname}}_ {{ansible_hostname}}
+  args:
+    chdir: "{{ ca_store }}/openssl_client_keystore"
+    creates: "{{ ca_store }}/openssl_client_keystore/client_{{ansible_hostname}}_client.pem"
+
+#now distribute the stuff
+
+- name: Creates /usr/share/ca-certificates/dummy_ca
+  file: path=/usr/share/ca-certificates/dummy_ca state=directory mode=0755
+
+- name: copy ca-cert from CA
+  copy:
+     src: "{{ ca_store }}/dummy_ca/ca-cert" 
+     dest: /usr/share/ca-certificates/dummy_ca/ca-cert 
+
+- name: Creates /etc/kspp-keystore
+  file: path=/etc/kspp-keystore state=directory mode=0755 
+
+- name: copy ca-cert from CA
+  copy:
+     src: "{{ ca_store }}/dummy_ca/ca-cert" 
+     dest: /etc/kspp-keystore/ca-cert 
+
+- name: copy client keystore
+  copy:
+     src: "{{ ca_store }}/java_client_keystore/client_{{ansible_hostname}}_client.keystore.jks" 
+     dest: /etc/kspp-keystore/client.keystore.jks
+
+- name: copy client truststore
+  copy:
+     src: "{{ ca_store }}/java_client_keystore/client_{{ansible_hostname}}_client.keystore.jks" 
+     dest: /etc/kspp-keystore/client.truststore.jks
+
+- name: copy openssl key
+  copy:
+     src: "{{ ca_store }}/openssl_client_keystore/client_{{ansible_hostname}}_client.key" 
+     dest: /etc/kspp-keystore/client.key
+
+- name: copy openssl pem
+  copy:
+     src: "{{ ca_store }}/openssl_client_keystore/client_{{ansible_hostname}}_client.pem" 
+     dest: /etc/kspp-keystore/client.pem
+
+
