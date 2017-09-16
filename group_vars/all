@@ -1,1 +1,5 @@
 ca_store: /var/test_ca_store
+
+kafka_user: kafka
+kafka_group: kafka
+

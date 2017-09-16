@@ -6,18 +6,34 @@
 
 #now distribute the stuff
 
-- name: Creates /usr/share/ca-certificates/dummy_ca
-  file: path=/usr/share/ca-certificates/dummy_ca state=directory mode=0755
+#- name: Creates /usr/share/ca-certificates/dummy_c
+#  file: path=/usr/share/ca-certificates/dummy_ca state=directory mode=0755#
+#
+#- name: copy ca-cert from CA
+#  copy:
+#     src: "{{ ca_store }}/dummy_ca/ca-cert" 
+#     dest: /usr/share/ca-certificates/dummy_ca/ca-cert 
+
+#copy broker key stores
+
+#fix permissios on this store - read for kafka??
+
+- name: Make sure the kafka group is present
+  action: group name={{ kafka_group }} state=present
+
+- name: Make sure the kafka user directory is present 
+  file: path="/app/home/{{ kafka_user }}" state=directory
+
+- name: Make sure the kafka user is present
+  user: name={{ kafka_user }} group={{ kafka_group }} home="/app/home/{{ kafka_user }}" shell=/bin/bash state=present comment="Kafka user"
+
+- name: Creates /etc/kafka-broker-keystore 
+  file: path=/etc/kafka-broker-keystore state=directory owner={{ kafka_user }} group={{ kafka_group }} mode=0750
 
 - name: copy ca-cert from CA
   copy:
      src: "{{ ca_store }}/dummy_ca/ca-cert" 
-     dest: /usr/share/ca-certificates/dummy_ca/ca-cert 
-
-#copy broker key stores
-
-- name: Creates /etc/kafka-broker-keystore
-  file: path=/etc/kafka-broker-keystore state=directory mode=0755 
+     dest: /etc/kafka-broker-keystore/ca-cert 
 
 - name: copy server keystore
   copy:
